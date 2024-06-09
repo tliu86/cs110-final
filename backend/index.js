@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
-const router = require('./routes/router.js')
+const router = require('./routes/routes.js')
 
 const app = express()
 
@@ -16,6 +16,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions))
 app.use('/', router)
+
+//remember how requests work 
 
 //front end runs on 3000 
 const port = 8080;
