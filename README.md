@@ -18,6 +18,6 @@ In the backend folder (create a terminal within the backend), you can run
 
 ### `npm run dev` 
 
-Runs the backened server to connect it with the MongoDB cluster.\
+Runs the backened server to connect it with the MongoDB cluster.
 
-After running both commands in different terminals, you should be able to have a fully functioning full-stack website.\
+After running both commands in different terminals, you should be able to have a fully functioning full-stack website.
