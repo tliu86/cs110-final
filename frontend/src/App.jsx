@@ -11,9 +11,9 @@ import Login from './pages/Login';
 const App = () => {
   return (
     <Routes>
-      <Route path='/register' element={<SignUp />} />
+      <Route path='/' element={<SignUp />} />
       <Route path='/login' element={<Login />} />
-      <Route path='/' element={<Home />} />
+      <Route path='/home' element={<Home />} />
       <Route path='/notes/create' element={<CreateNotes />} />
       <Route path='/notes/details/:id' element={<ShowNote />} />
       <Route path='/notes/edit/:id' element={<EditNote />} />

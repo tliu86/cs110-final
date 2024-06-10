@@ -33,7 +33,7 @@ const Login = () => {
         console.log("Login response data:", responseData);
         if (responseData === "Success") {
           enqueueSnackbar('You have logged in successfully', { variant: 'success' });
-          navigate('/');
+          navigate('/home');
         } else if (responseData === "The password is incorrect") {
           enqueueSnackbar('Error, Incorrect Password ', { variant: 'error' });
         } else if (responseData === "Email not registered") {
