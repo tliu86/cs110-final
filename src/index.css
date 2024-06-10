@@ -1,19 +1,16 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: ivory;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-.loginPage {
+.loginPage, .register {
   color: darkslategrey;
   max-width: 400px;
   margin: 0 auto;
@@ -21,11 +18,11 @@ code {
   min-height: 100vh;
 }
 
-.loginPage label {
+.loginPage label, .register label {
   text-align: left;
   display: block;
 }
-.loginPage input {
+.loginPage input, .register input {
   width: 100%;
   padding: 6px 10px;
   margin: 10px 0;
@@ -33,7 +30,7 @@ code {
   box-sizing: border-box;
   display: block;
 }
-.loginPage button {
+.loginPage button, .register button {
   background: darkslategray;
   color: #ddd;
   border: 0;

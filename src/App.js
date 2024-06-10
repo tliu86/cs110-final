@@ -1,4 +1,5 @@
 import LoginPage from "./components/LoginPage.js"
+// import Register from "./components/Register.js"
 //import React, {useEffect, useState} from 'react'
 
 function App() {
@@ -18,7 +19,10 @@ function App() {
   
   return (
     <div className="App">
+      {/* <h1> React here </h1> */}
+      {/* <Register/> */}
       <LoginPage/>
+
       {/* {(typeof backenedData.users === "undefined") ? (
         <p> Loading. . . </p>
       ): (
