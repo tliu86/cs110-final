@@ -36,7 +36,7 @@ const CreateNotes = () => {
         .then(() => {
             setLoading(false);
             enqueueSnackbar('Note Created Successfully', {variant: 'success'});
-            navigate('/');
+            navigate('/home');
         })
         .catch(error => {
             setLoading(false);

@@ -59,7 +59,7 @@ const EditNote = () => {
         .then(() => {
             setLoading(false);
             enqueueSnackbar('Note Updated Successfully', {variant: 'success'})
-            navigate('/');
+            navigate('/home');
         })
         .catch(error => {
             setLoading(false);

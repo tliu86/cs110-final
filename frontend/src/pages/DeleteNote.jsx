@@ -25,7 +25,7 @@ const DeleteNote = () => {
         .then(() => {
             setLoading(false);
             enqueueSnackbar('Note Deleted Successfully', {variant: 'success'})
-            navigate('/');
+            navigate('/home');
         })
         .catch(error => {
             setLoading(false);

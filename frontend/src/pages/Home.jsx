@@ -6,6 +6,7 @@ import {BsInfoCircle } from 'react-icons/bs';
 import {MdOutlineAddBox, MdOutlineDelete} from 'react-icons/md';
 import NotesCard from '../components/home/NotesCard';
 import NotesTable from '../components/home/NotesTable';
+import Navbar from '../components/Navbar';
 const Home = () => {
     const [notes, setNotes] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -31,7 +32,8 @@ const Home = () => {
     }, []);
 
   return (
-    <div className="p-4">
+    <div className="p-4 pt-1">
+        <Navbar />
         <div className='flex justify-center items-center gap-x-4'>
             <button className='bg-sky-300 hover:bg-sky-600 px-4 py-1 rounded-lg' onClick={() => setShowType('table')}>
             Table

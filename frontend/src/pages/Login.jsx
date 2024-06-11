@@ -8,6 +8,15 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const [loginStatus, setLoginStatus] = useState(false);
+
+  const loggedIn = () => {
+    setLoginStatus(true);
+  }
+
+  const loggedOut = () => {
+    setLoginStatus(false);
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -24,6 +33,7 @@ const Login = () => {
       body: JSON.stringify(data),
     })
       .then(response => {
+        console.log(response)
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -31,22 +41,63 @@ const Login = () => {
       })
       .then(responseData => {
         console.log("Login response data:", responseData);
-        if (responseData === "Success") {
+        if (responseData.success === "Success") {
           enqueueSnackbar('You have logged in successfully', { variant: 'success' });
-          navigate('/home');
-        } else if (responseData === "The password is incorrect") {
+          loggedIn();
+          localStorage.setItem("token", responseData.token);
+          userAuthenticated();
+          //navigate('/home');
+        } else if (responseData.fail === "The password is incorrect") {
           enqueueSnackbar('Error, Incorrect Password ', { variant: 'error' });
-        } else if (responseData === "Email not registered") {
+          loggedOut();
+        } else if (responseData.fail === "Email not registered") {
           enqueueSnackbar('Error, Incorrect Email', { variant: 'error' });
         } else {
           enqueueSnackbar('Unknown Error', { variant: 'error' });
+          loggedOut();
         }
       })
       .catch(error => {
         console.error("Login failed:", error);
         enqueueSnackbar('Error, Login Failed ', { variant: 'error' });
+        loggedOut();
       });
   }
+
+
+  const userAuthenticated = () => {
+    fetch("http://localhost:5555/api/isUserAuth", {
+      headers: {
+        "x-access-token": localStorage.getItem('token')
+      },
+    }).then((response) => response.json())
+      .then(data => {
+        console.log(data);
+        if (data.auth) {
+          navigate('/home'); // Redirect to home if authenticated
+        } else {
+          enqueueSnackbar('Authentication failed', { variant: 'error' });
+          loggedOut();
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        enqueueSnackbar('Authentication failed', { variant: 'error' });
+        loggedOut();
+      });
+  }
+
+  /*const userAuthenticated = () => {
+    fetch("http://localhost:5555/api/isUserAuth", {
+     headers: {
+      "x-access-token": localStorage.getItem('token')
+     }, 
+    }).then((response) => {
+      console.log(response);
+    }).catch((error) => {
+      console.error("Error: ", error)
+    })
+  }*/
   
 
   return (
@@ -86,9 +137,10 @@ const Login = () => {
         </form>
         <div className="text-center mt-4 flex flex-col items-center gap-2">
           <p>Already have an account?</p>
-          <Link to="/register" className='border bg-white w-1/4 text-black w-full py-2 px-4 rounded-md hover:bg-sky-500 focus:outline-none focus:ring focus:ring-indigo-200 focus:ring-opacity-50'>
+          <Link to="/" className='border bg-white w-1/4 text-black w-full py-2 px-4 rounded-md hover:bg-sky-500 focus:outline-none focus:ring focus:ring-indigo-200 focus:ring-opacity-50'>
             Register
           </Link>
+          
         </div>
       </div>
     </div>
