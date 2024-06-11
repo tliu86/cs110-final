@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, {useState, useEffect} from 'react'
 import { useNavigate } from 'react-router-dom'
 import BackButton from '../components/BackButton'
@@ -6,26 +7,39 @@ import { useSnackbar } from 'notistack'
 
 const CreateNotes = () => {
     const [title, setTitle] = useState('');
-    const [author, setAuthor] = useState('');
+    // const [author, setAuthor] = useState('');
     const [subject, setSubject] = useState('');
-    const [publishYear, setPublishYear] = useState('');
+    // const [publishYear, setPublishYear] = useState('');
+    const [files, setFiles] = useState([]);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     const handleSaveNote = () => {
         const data = {
             title,
-            author,
+            // author,
             subject,
-            publishYear,
+            // publishYear,
         };
+
+        if (!title || !subject || !files) return enqueueSnackbar('Error, Enter all fields and upload your notes.', {variant: 'Error'});
+
         setLoading(true);
+
+        const formData = new FormData();
+        files.forEach((file, index) => {
+            formData.append(`file${index}`, file);
+        });
+
+        formData.set('title', title);
+        formData.set('subject', subject);
+
         fetch('http://localhost:5555/notes', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
+            method: 'POST',
+            headers: {
+                "x-access-token": localStorage.getItem('token'),
+            },
+            body: formData
         })
         .then(response => {
             if (!response.ok) {
@@ -33,9 +47,10 @@ const CreateNotes = () => {
             }
             return response.json();
         })
-        .then(() => {
+        .then((r) => {
             setLoading(false);
             enqueueSnackbar('Note Created Successfully', {variant: 'success'});
+            // window.open(`/notes/details/${r._id}`, '_blank').focus();
             navigate('/home');
         })
         .catch(error => {
@@ -48,7 +63,7 @@ const CreateNotes = () => {
     return (
     <div className='p-4'>
         <BackButton />
-        <h1 className='text-3xl my-4'>Create Book</h1>
+        <h1 className='text-3xl my-4'>Create Note</h1>
         {loading ? (<Spinner />) : ''}
         <div className='flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4 mx-auto'>
             <div className='my-4'>
@@ -60,7 +75,7 @@ const CreateNotes = () => {
                     className='border-2 border-gray-500 px-4 py-2 w-full'
                 />
             </div>
-            <div className='my-4'>
+            {/* <div className='my-4'>
                 <label className='text-xl mr-4 text-gray-500'>Author</label>
                 <input 
                     type='text'
@@ -68,7 +83,7 @@ const CreateNotes = () => {
                     onChange={(e) => setAuthor(e.target.value)}
                     className='border-2 border-gray-500 px-4 py-2 w-full'
                 />
-            </div>
+            </div> */}
             <div className='my-4'>
                 <label className='text-xl mr-4 text-gray-500'>Subject</label>
                 <input 
@@ -78,13 +93,24 @@ const CreateNotes = () => {
                     className='border-2 border-gray-500 px-4 py-2 w-full'
                 />
             </div>
-            <div className='my-4'>
+            {/* <div className='my-4'>
                 <label className='text-xl mr-4 text-gray-500'>Publish Year</label>
                 <input 
                     type='text'
                     value={publishYear}
                     onChange={(e) => setPublishYear(e.target.value)}
                     className='border-2 border-gray-500 px-4 py-2 w-full'
+                />
+            </div> */}
+            <div>
+                <label className="text-xl mr-4 text-gray-500" htmlFor="files">Pictures or pdf of notes</label>
+                <input
+                    id="files" 
+                    type="file" 
+                    onChange={(e) => setFiles([...e.target.files])}
+                    className="px-4 py-2 w-full" 
+                    accept="image/*,.pdf"
+                    multiple 
                 />
             </div>
             <button className='p-2 bg-sky-300 m-8' onClick={handleSaveNote}>

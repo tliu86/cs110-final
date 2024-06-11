@@ -5,6 +5,7 @@ import { useSnackbar } from 'notistack'
 
 const SignUp = () => {
   const [name, setName] = useState('');
+  const [username, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const SignUp = () => {
     e.preventDefault();
     const data = {
       name,
+      username,
       email,
       password
     };
@@ -57,6 +59,20 @@ const SignUp = () => {
               name="name" 
               className='w-full px-3 py-2 border rounded focus:outline-none focus:border-indigo-500' 
               onChange={(e) => setName(e.target.value)} 
+              required
+            />
+          </div>
+          <div className='mb-4'>
+            <label htmlFor='name' className='block mb-1'>
+              Username
+            </label>
+            <input 
+              type='text' 
+              placeholder='Enter Username' 
+              autoComplete="off" 
+              name="name" 
+              className='w-full px-3 py-2 border rounded focus:outline-none focus:border-indigo-500' 
+              onChange={(e) => setUserName(e.target.value)} 
               required
             />
           </div>
