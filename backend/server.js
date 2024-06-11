@@ -5,10 +5,17 @@ import {Note} from "./models/noteModel.js";
 import notesRoute from './routes/notesRoute.js';
 import registerRoute from './routes/registerRoute.js'
 import {router as loginRoute} from './routes/loginRoute.js'
+import { initializeApp } from 'firebase-admin/app';
 import cors from "cors";
 
 const app = express();
 
+import serviceAccount from "./serviceAccountKey.json" assert { type: "json" };
+import credential from "firebase-admin";
+
+const firebaseApp = initializeApp({
+    credential: credential.credential.cert(serviceAccount)
+});
 
 //Middleware for parsing request body
 

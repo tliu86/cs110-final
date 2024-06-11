@@ -20,6 +20,10 @@ const registerSchema = mongoose.Schema(
             type: String,
             require: true,
         },
+        oauthID: {
+            type: String,
+            require: false
+        }
     },
 
     {

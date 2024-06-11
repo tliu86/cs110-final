@@ -2,8 +2,11 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack'
+import {GoogleAuthProvider, signInWithPopup, getAuth} from 'firebase/auth';
+import {app} from '../firebase';
 
 const SignUp = () => {
+  const auth = getAuth(app);
   const [name, setName] = useState('');
   const [username, setUserName] = useState('');
   const [email, setEmail] = useState('');
@@ -11,7 +14,7 @@ const SignUp = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
       name,
@@ -28,19 +31,65 @@ const SignUp = () => {
       body: JSON.stringify(data),
     })
       .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
         return response.json();
       })
       .then(responseData => {
-        console.log(responseData);
+        if (!responseData.name) {
+          if (responseData.message) {
+            return enqueueSnackbar(`Error: ${responseData.message}`, {variant: 'Error'});
+          }
+          throw new Error('Network response was not ok');
+        }
         enqueueSnackbar('You have Registered Successfully', {variant: 'success'});
         navigate('/login')
       })
-      .catch(error => {
-        enqueueSnackbar('Error, Registration Failed', {variant: 'Error'});
-      });
+      // .catch(error => {
+      //   enqueueSnackbar('Error, Registration Failed', {variant: 'Error'});
+      // });
+  }
+
+  const handleGoogleClick = async () => {
+
+    if (!name || !username) {
+      return enqueueSnackbar('Error: Fill out Name and Username fields.', {variant: 'Error'});
+    }
+
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({prompt: "select_account"});
+    try{
+        const result = await signInWithPopup(auth, provider);
+        
+        const tok = await auth.currentUser.getIdToken();
+        
+        var userEmail = result.user.email;
+
+        const data = {
+          name,
+          username,
+          email: userEmail,
+          oauth: true,
+          oauthToken: tok
+        };
+
+        let resp = await fetch('http://localhost:5555/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        })
+        let respData = await resp.json()
+
+        if (!resp.ok) {
+          return enqueueSnackbar(`Error: ${respData.message || 'Google Registration Failed'}`, {variant: 'Error'});
+        }
+
+        enqueueSnackbar('You have Registered Successfully', {variant: 'success'});
+        navigate('/login')
+    }
+    catch(error){
+        console.log(error);
+    }
   }
 
   return (
@@ -106,6 +155,7 @@ const SignUp = () => {
           </div>
           <button type="submit" className='w-full bg-sky-900 text-white py-2 px-4 rounded-md hover:bg-sky-500 focus:outline-none focus:ring focus:ring-indigo-200 focus:ring-opacity-50'>Register</button>
         </form>
+        <button type="submit" onClick = {handleGoogleClick} className='w-full bg-white border mt-2 text-black py-2 px-4 rounded-md hover:bg-sky-500 focus:outline-none focus:ring focus:ring-indigo-200 focus:ring-opacity-50'>Register With Google</button>
         <div className="text-center mt-4 flex flex-col items-center gap-2">
           <p>Already have an account?</p>
           <Link to="/login" className='border bg-white w-1/4 text-black w-full py-2 px-4 rounded-md hover:bg-sky-500 focus:outline-none focus:ring focus:ring-indigo-200 focus:ring-opacity-50'>

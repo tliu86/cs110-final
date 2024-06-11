@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Register } from '../models/registerModel.js';
+import { getAuth } from 'firebase-admin/auth';
 
 const router = express.Router();
 
@@ -33,22 +34,46 @@ router.post("/login", async (request, response) => {
     try {
         if (
             !request.body.email ||
-            !request.body.password
+            (!request.body.password && !request.body.oauth)
         ) {
             return response.status(400).send({
                 message: 'Send all required fields: email and password'
             });
         }
+
         const email = request.body.email
-        const password = request.body.password
+
         const user = await Register.findOne({ email });
         
         if (user) {
-            const isMatch = await bcrypt.compare(password, user.password);
+            var isMatch;
+
+            if (request.body.oauth) {
+                const oauthToken = request.body.oauthToken
+                const decodedToken = await getAuth().verifyIdToken(oauthToken)
+                const oauthId = decodedToken.uid;
+
+                if (user.oauthID != oauthId) {
+                    return response.json({fail: 'Invalid oauth.', auth: false});
+                }
+                isMatch = true;
+            } else {
+                const password = request.body.password
+                isMatch = await bcrypt.compare(password, user.password);
+
+                if (!isMatch) return response.json({fail: 'The password is incorrect', auth: false});
+            }
             if (isMatch) {
-                const token = jwt.sign({ id: user._id }, 'abcde', { expiresIn: '1h' });
+                const token = jwt.sign({ id: user.id }, 'abcde', { expiresIn: '1h' });
                 
-                 response.json( {success: "Success", auth: true, token: token, email: email, userID: user.id});
+                 response.json({
+                    success: "Success", 
+                    auth: true, 
+                    token: token, 
+                    email: email, 
+                    userID: user.id,
+                    username: user.username
+                });
             } else {
                  response.json({fail: 'The password is incorrect', auth: false});
             }

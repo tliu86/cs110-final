@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack'
+import OAuth from '../components/OAuth';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -45,6 +46,8 @@ const Login = () => {
           enqueueSnackbar('You have logged in successfully', { variant: 'success' });
           loggedIn();
           localStorage.setItem("token", responseData.token);
+          localStorage.setItem("userID", responseData.userID);
+          localStorage.setItem("username", responseData.username);
           userAuthenticated();
           //navigate('/home');
         } else if (responseData.fail === "The password is incorrect") {
@@ -135,8 +138,10 @@ const Login = () => {
           </div>
           <button type="submit" className='w-full bg-sky-900 text-white py-2 px-4 rounded-md hover:bg-sky-500 focus:outline-none focus:ring focus:ring-indigo-200 focus:ring-opacity-50'>Login</button>
         </form>
+
+        <OAuth></OAuth>
         <div className="text-center mt-4 flex flex-col items-center gap-2">
-          <p>Already have an account?</p>
+          <p>Don't have an account?</p>
           <Link to="/" className='border bg-white w-1/4 text-black w-full py-2 px-4 rounded-md hover:bg-sky-500 focus:outline-none focus:ring focus:ring-indigo-200 focus:ring-opacity-50'>
             Register
           </Link>

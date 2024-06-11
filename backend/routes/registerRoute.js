@@ -1,6 +1,7 @@
 import express from 'express';
 import { Register } from '../models/registerModel.js';
 import bcrypt from 'bcrypt'
+import { getAuth } from 'firebase-admin/auth';
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.post('/register', async (request, response) => {
             !request.body.name ||
             !request.body.username ||
             !request.body.email ||
-            !request.body.password
+            (!request.body.password && !request.body.oauth)
         ) {
             return response.status(400).send({
                 message: 'Send all required fields: name, email, password'
@@ -25,16 +26,36 @@ router.post('/register', async (request, response) => {
         const existingUsernameUser = await Register.findOne({username});
 
         if (existingEmailUser || existingUsernameUser) {
-            return response.status(400).json({ message: 'User already exists' });
+            return response.status(400).json({ message: 'Account already exists' });
         }
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(request.body.password, salt);
-        const newUser = new Register({
-            name: request.body.name,
-            username: request.body.username,
-            email: request.body.email,
-            password: hashedPassword
-        });
+
+        var newUser = "";
+
+        if (request.body.password){
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(request.body.password, salt);
+            newUser = new Register({
+                name: request.body.name,
+                username: request.body.username,
+                email: request.body.email,
+                password: hashedPassword
+            });
+        } else if (request.body.oauth)  {
+            const oauthToken = request.body.oauthToken
+            const decodedToken = await getAuth().verifyIdToken(oauthToken)
+            const oauthId = decodedToken.uid;
+            
+            if (decodedToken?.email?.toLowerCase() != email.toLowerCase()) {
+                return response.status(400).json({ message: 'Email mismatch.' });
+            };
+ 
+            newUser = new Register({
+                name: request.body.name,
+                username: request.body.username,
+                email: email,
+                oauthID: oauthId
+            }); 
+        }
          // Save the new user to the database
          const savedUser = await newUser.save();
 
