@@ -1,31 +1,52 @@
 import express from 'express';
 import { Note } from '../models/noteModel.js';
+import { NoteFile } from '../models/NoteFileModel.js';
+import fileUpload from 'express-fileupload';
+import { verifyJWT } from './loginRoute.js';
 
 const router = express.Router();
 
 
 //Route for Save a new Note
-router.post('/', async (request, response) => {
+router.post('/', verifyJWT, fileUpload(), async (request, response) => {
     try{
         if (
             !request.body.title ||
-            !request.body.author ||
             !request.body.subject ||
-            !request.body.publishYear
+            !request.files
         ) {
             return response.status(400).send({
-                message: 'Send all required fields: title, author, subject, publishYear',
+                message: 'Send all required fields: title, subject, files',
             })
         }
 
+        let files = []
+        let fileIDs = []
+
+        for (const fileID in request.files) {
+            let file = request.files[fileID]
+            fileIDs.push(fileID)
+
+            let newFile = {
+                name: file.name,
+                type: file.mimetype.split('/').at(-1),
+            }
+            files.push(newFile);
+        }
+        
         const newNote = {
             title: request.body.title,
-            author: request.body.author,
             subject: request.body.subject,
-            publishYear: request.body.publishYear
+            files: files,
+            author: request.userId
         };
 
         const note = await Note.create(newNote);
+        console.log(note.id)
+        for (const [index, fileID] of fileIDs.entries()) {
+            let file = note.files.at(index)
+            request.files[fileID].mv(`./uploads/${file.id}.${file.type}`)
+        }
 
         return response.status(201).send(note);
 
@@ -58,6 +79,9 @@ router.get('/:id', async (request, response) => {
         const {id} = request.params;
         const note = await Note.findById(id);
 
+        if(!note) {
+            return response.status(404).json({message: 'Note not found'});
+        }
         return response.status(200).json(note);
     } catch (error){
         console.log(error.message);
@@ -66,9 +90,13 @@ router.get('/:id', async (request, response) => {
 })
 
 // Route for Update a Note
-router.put('/:id', async (request, response) => {
+router.put('/:id', verifyJWT, async (request, response) => {
     try{
         const {id} = request.params;
+        const note = await Note.findById(id);
+
+        if (note.author != request.userId) return response.status(403).json({message: 'This is not your note.'});
+
         const result = await Note.findByIdAndUpdate(id, request.body);
 
         if (!result) {
@@ -82,9 +110,13 @@ router.put('/:id', async (request, response) => {
 })
 
 // Route for Delete a Note
-router.delete('/:id', async (request, response) => {
+router.delete('/:id', verifyJWT, async (request, response) => {
     try{
         const {id} = request.params;
+        const note = await Note.findById(id);
+
+        if (note.author != request.userId) return response.status(403).json({message: 'This is not your note.'});
+
         const result = await Note.findByIdAndDelete(id);
 
         if (!result) {

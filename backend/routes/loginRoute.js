@@ -48,7 +48,7 @@ router.post("/login", async (request, response) => {
             if (isMatch) {
                 const token = jwt.sign({ id: user._id }, 'abcde', { expiresIn: '1h' });
                 
-                 response.json( {success: "Success", auth: true, token: token, email: email});
+                 response.json( {success: "Success", auth: true, token: token, email: email, userID: user.id});
             } else {
                  response.json({fail: 'The password is incorrect', auth: false});
             }
@@ -62,4 +62,4 @@ router.post("/login", async (request, response) => {
     }
 });
 
-  export default router;
+export {router, verifyJWT};

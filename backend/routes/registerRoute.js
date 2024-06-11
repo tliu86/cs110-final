@@ -9,6 +9,7 @@ router.post('/register', async (request, response) => {
     try {
         if (
             !request.body.name ||
+            !request.body.username ||
             !request.body.email ||
             !request.body.password
         ) {
@@ -17,15 +18,20 @@ router.post('/register', async (request, response) => {
             });
         }
         const email = request.body.email
-        // Checking if it's a new user
-        const existingUser = await Register.findOne({email});
-        if (existingUser) {
+        const username = request.body.username
+
+        // Checking if it's a new user by email and username
+        const existingEmailUser = await Register.findOne({email});
+        const existingUsernameUser = await Register.findOne({username});
+
+        if (existingEmailUser || existingUsernameUser) {
             return response.status(400).json({ message: 'User already exists' });
         }
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(request.body.password, salt);
         const newUser = new Register({
             name: request.body.name,
+            username: request.body.username,
             email: request.body.email,
             password: hashedPassword
         });
@@ -34,9 +40,6 @@ router.post('/register', async (request, response) => {
 
          // Respond with the saved user data
          response.status(201).json(savedUser);
-
-        
-    
     } catch (error) {
         console.log(error.message);
         response.status(500).send({ message: error.message });

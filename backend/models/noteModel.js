@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { NoteFileSchema } from '../models/NoteFileModel.js';
 
 const noteSchema = mongoose.Schema(
     {
@@ -14,10 +15,7 @@ const noteSchema = mongoose.Schema(
             type: String,
             require: true,
         },
-        publishYear: {
-            type: String,
-            require: true,
-        },
+        files: [NoteFileSchema],
     },
 
     {

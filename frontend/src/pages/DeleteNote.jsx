@@ -15,7 +15,10 @@ const DeleteNote = () => {
     const handleDeleteNote = () => {
         setLoading(true);
         fetch(`http://localhost:5555/notes/${id}`, {
-        method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                "x-access-token": localStorage.getItem('token'),
+            },
         })
         .then(response => {
             if (!response.ok) {

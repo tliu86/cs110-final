@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import {Note} from "./models/noteModel.js";
 import notesRoute from './routes/notesRoute.js';
 import registerRoute from './routes/registerRoute.js'
-import loginRoute from './routes/loginRoute.js'
+import {router as loginRoute} from './routes/loginRoute.js'
 import cors from "cors";
 
 const app = express();
@@ -27,6 +27,7 @@ app.use('/api', registerRoute);
 
 app.use('/api', loginRoute);
 
+app.use('/uploads', express.static('uploads'))
 
 mongoose
     .connect(mongoDBURL)

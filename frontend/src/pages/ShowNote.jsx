@@ -23,6 +23,7 @@ const ShowNote = () => {
         })
         .catch(error => {
             console.log(error);
+            setNote(false);
             setLoading(false);
         });
     }, []);
@@ -31,7 +32,7 @@ const ShowNote = () => {
     <div className='p-4'>
         <BackButton />
         <h1 className='text-3xl my-4'>Show Note</h1>
-        {loading ? (<Spinner />) : (
+        {loading ? (<Spinner />) : !note ? "note not found": (
             <div className='flex flex-col border-2 border-sky0-400 rounded-xl w-fit p-4'>
                 <div className='my-4'>
                     <span className='text-xl mr-4 text-gray-500'>Id</span>
@@ -49,15 +50,30 @@ const ShowNote = () => {
                     <span className='text-xl mr-4 text-gray-500'>Subject</span>
                     <span>{note.subject}</span>
                 </div>
-                <div className='my-4'>
+                {/* <div className='my-4'>
                     <span className='text-xl mr-4 text-gray-500'>Publish Year</span>
                     <span>{note.publishYear}</span>
-                </div>
+                </div> */}
                 <div className='my-4'>
                     <span className='text-xl mr-4 text-gray-500'>Create Time</span>
                     <span>{new Date(note.createdAt).toString()}</span>
                 </div>
 
+                <div>
+                {note.files?.map((file) => {
+                    console.log(file)
+                    if (file.type == "pdf") {
+                        return (<object 
+                            key={file.name}
+                            className="w-full h-screen" 
+                            data={`http://localhost:5555/uploads/${file._id}.${file.type}`}
+                        >
+                        </object>)
+                    } else {
+                        return (<img key={file.name} src={`http://localhost:5555/uploads/${file._id}.${file.type}`}/>)
+                    }
+                })}
+                </div>
             </div>
         )}
 
