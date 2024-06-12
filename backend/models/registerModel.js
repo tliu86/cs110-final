@@ -1,5 +1,23 @@
 import mongoose from "mongoose";
 
+const additionalInfoSchema = new mongoose.Schema({
+    age: {
+        type: Number,
+        require: true,
+    },
+    birthDate: {
+        type: Number,
+        require: true,
+    },
+    gender: {
+        type: String,
+        require: true,
+    },
+    bio: {
+        type: String,
+    }
+})
+
 const registerSchema = mongoose.Schema(
     {
         name: {
@@ -23,6 +41,9 @@ const registerSchema = mongoose.Schema(
         oauthID: {
             type: String,
             require: false
+        },
+        addInfo: {
+            type: additionalInfoSchema
         }
     },
 
@@ -32,4 +53,6 @@ const registerSchema = mongoose.Schema(
 
 );
 
+
 export const Register = mongoose.model('Register', registerSchema)
+export const additionalInfo = mongoose.model('additionalInfo', additionalInfoSchema)
