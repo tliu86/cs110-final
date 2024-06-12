@@ -1,3 +1,7 @@
+## Additional Files to Include:
+
+Within the backend folder, a JSON file called serviceAccountKey.json with secret code is necessary. Additionally, within the backend folder, a folder called uploads is needed. Besides these two files, everything else is already in the repo.
+
 ## Available Scripts
 
 In the project directory, you can access two files: the frontend and the backend. 
@@ -20,6 +24,8 @@ You may also see any lint errors in the console.
 
 ### `npm i .`
 ### `npm i nodemon`
+
+Installs necessary dependencies. 
 
 ### `npm run dev` 
 
