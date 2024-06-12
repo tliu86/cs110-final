@@ -1,6 +1,8 @@
 ## Additional Files to Include:
 
-Within the backend folder, a JSON file called serviceAccountKey.json with secret code is necessary. Additionally, within the backend folder, a folder called uploads is needed. Besides these two files, everything else is already in the repo.
+Within the backend folder, a JSON file called serviceAccountKey.json with secret code is necessary. 
+Additionally, within the backend folder, a folder called uploads is needed. 
+In the frontend, the firebase.js code is needed with the secret api key. 
 
 ## Available Scripts
 
