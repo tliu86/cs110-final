@@ -5,3 +5,85 @@
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
+
+.profile {
+    /* background-color: #f0f0f0; */
+    display: flex;
+    flex-direction: column;
+    /* justify-content: center; */
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  .profile .content {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 300px;
+    text-align: center;
+  }
+  
+  .editProfile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .formContainer {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .chooseForm {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .formItem {
+    margin-bottom: 15px;
+  }
+  
+  .formItem label {
+    font-size: 16px;
+    margin-bottom: 5px;
+    display: block;
+    color: #333;
+  }
+  
+  .formItem input[type="number"], .formItem select, .formItem textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      box-sizing: border-box;
+  }
+  
+  .formItem textarea {
+    resize: vertical;
+    text-wrap: true;
+  }
+  
+  .formItem button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  
+  .formItem button:hover {
+    background-color: #0267d4;
+  }
