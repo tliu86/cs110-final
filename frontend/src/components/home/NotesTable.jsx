@@ -29,7 +29,7 @@ const userID = localStorage.getItem("userID");
                                 {note.title}
                             </td>
                             <td className='border border-slate-700 rounded-md text-center max-md:hidden'>
-                                {note.authorName}
+                                <a href={`profile/${note.authorName}`}>{note.authorName}</a>
                             </td>
                             <td className='border border-slate-700 rounded-md text-center max-md:hidden'>
                                 {note.subject}

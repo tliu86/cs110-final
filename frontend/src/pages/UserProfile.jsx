@@ -1,9 +1,13 @@
 import Profile from "../components/Profile.jsx"
 import React from "react";
+import { useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
 
 const UserProfile = () => {
-    let user = window.localStorage.getItem("username"); 
+    const {username} = useParams();
+    
+    let user = username || window.localStorage.getItem("username");
+
     return (  
         <>
             <Navbar/>

@@ -232,7 +232,8 @@ const ShowNote = () => {
                         </div>
                         <div className='my-1'>
                             <span className='text-xl mr-4 text-gray-500'>Author</span>
-                            <span>{note.authorName}</span>
+                            {/* <span>{note.authorName}</span> */}
+                            <a href={`/profile/${note.authorName}`}>{note.authorName}</a>
                         </div>
                         <div className='my-1'>
                             <span className='text-xl mr-4 text-gray-500'>Subject</span>
@@ -303,7 +304,7 @@ const ShowNote = () => {
                                 return (
                                     <div key={review.userID} className="mt-2">
                                         <div className="flex items-center">
-                                            <span className="mr-3">{review.userName}</span>
+                                            <a className="font-bold mr-3" href={`/profile/${review.userName}`}>{review.userName}</a>
                                             <div className="flex items-center ml-auto mr-4">
                                             {[...Array(review.rating)].map((e,i) => (
                                                 <svg key={i} className="w-4 h-4 text-yellow-300 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">

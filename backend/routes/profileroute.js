@@ -12,10 +12,10 @@ router.get('/user-data/:userName', async (request, response) => {
         const name = result[0].name 
         const username = result[0].username
         const email = result[0].email
-        const gender = result[0].addInfo.gender
-        const age = result[0].addInfo.age
-        const bio = result[0].addInfo.bio
-        const birthDate = result[0].addInfo.birthDate
+        const gender = result[0].addInfo?.gender
+        const age = result[0].addInfo?.age
+        const bio = result[0].addInfo?.bio
+        const birthDate = result[0].addInfo?.birthDate
     
         response.json({username: username, email: email, name: name, gender: gender, age: age, bio: bio, birthDate: birthDate})
     } catch (error) {

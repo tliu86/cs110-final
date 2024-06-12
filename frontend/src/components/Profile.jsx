@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 
 const Profile = (props) => {
-
+    let localUsername = localStorage.getItem("username"); 
     const [username, setUserName] = useState('');
     const [name, setName] = useState('')
     const [userEmail, setUserEmail] = useState('')
@@ -57,7 +57,7 @@ const Profile = (props) => {
                 <p className="bio"> <b> Bio: </b> <br/> {bio} </p>
             </div>
             <br/> <br/>
-            <button className="bg-blue text-sky-900 px-3 ml-2 rounded hover:bg-gray-200" onClick={editProfile}> Edit Profile </button>
+            {localUsername == username && (<button className="bg-blue text-sky-900 px-3 ml-2 rounded hover:bg-gray-200" onClick={editProfile}> Edit Profile </button>)}
         </div>
     );
 }
