@@ -16,6 +16,10 @@ const noteSchema = mongoose.Schema(
             require: true,
         },
         files: [NoteFileSchema],
+        averageRating: {
+            type: Number,
+            require: true
+        }
     },
 
     {

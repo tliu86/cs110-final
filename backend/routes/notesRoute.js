@@ -3,6 +3,8 @@ import { Note } from '../models/noteModel.js';
 import { NoteFile } from '../models/NoteFileModel.js';
 import fileUpload from 'express-fileupload';
 import { verifyJWT } from './loginRoute.js';
+import { Register } from '../models/registerModel.js';
+import { NoteReview } from '../models/NoteReviewModel.js';
 
 const router = express.Router();
 
@@ -60,7 +62,17 @@ router.post('/', verifyJWT, fileUpload(), async (request, response) => {
 // Route for Get All notes from database
 router.get('/', async (request, response) => {
     try{
-        const notes = await Note.find({});
+        const notes = await Note.find({}).lean();
+
+        for (const i in notes) {
+            let note = notes[i];
+            let id = note.author;
+            let author = await Register.findById(id);
+            if (author?.username){
+                // console.log(author.username)
+                notes[i].authorName = author.username;
+            }
+        }
 
         return response.status(200).json({
             count: notes.length,
@@ -82,6 +94,10 @@ router.get('/:id', async (request, response) => {
         if(!note) {
             return response.status(404).json({message: 'Note not found'});
         }
+
+        const author = await Register.findById(note.author);
+        note._doc.authorName = author.username;
+
         return response.status(200).json(note);
     } catch (error){
         console.log(error.message);
@@ -123,6 +139,175 @@ router.delete('/:id', verifyJWT, async (request, response) => {
             return response.status(404).json({message: 'Note not found'});
         }
         return response.status(200).send({message: 'Note deleted successfully'});
+    } catch (error){
+        console.log(error.message);
+        response.status(500).send({message: error.message});
+    }
+})
+
+// Route to review and rate a note
+router.post('/:id/review', verifyJWT, async (request, response) => {
+    try{
+        const {id} = request.params;
+        const note = await Note.findById(id);
+        const userId = request.userId;
+
+        if(!note) {
+            return response.status(404).json({message: 'Note not found'});
+        }
+
+        const rating = request.body.rating;
+        // console.log(request.body)
+        if(rating == null) {
+            return response.status(400).json({message: 'Missing required field: rating.'});
+        } else if (rating < 1 || rating > 5) {
+            return response.status(400).json({message: 'Rating must be between 1 and 5.'});
+        }
+
+        const review = await NoteReview.findOne({noteID: id, userID: userId});
+
+        const content = request.body.content;
+        var newReview = {
+            userID: userId,
+            noteID: id,
+            content: content || '',
+            rating: rating
+        }
+
+        if(review) {
+            const updatedReview = await NoteReview.findByIdAndUpdate(review.id, {            
+                content: content || '',
+                rating: rating
+            })
+            return response.status(200).json(updatedReview);
+        }
+
+
+        const createdReview = await NoteReview.create(newReview);
+        return response.status(200).json(newReview);
+    } catch (error){
+        console.log(error.message);
+        response.status(500).send({message: error.message});
+    }
+})
+
+// Route to review and rate a note
+router.delete('/:id/review', verifyJWT, async (request, response) => {
+    try{
+        const {id} = request.params;
+        const note = await Note.findById(id);
+        const userId = request.userId;
+
+        if(!note) {
+            return response.status(404).json({message: 'Note not found'});
+        }
+
+        const review = await NoteReview.findOneAndDelete({noteID: id, userID: userId});
+
+        return response.status(200).json({});
+    } catch (error){
+        console.log(error.message);
+        response.status(500).send({message: error.message});
+    }
+})
+
+// Route to get reviews and ratings for a note
+router.get('/:id/reviews', verifyJWT, async (request, response) => {
+    try{
+        const {id} = request.params;
+        const note = await Note.findById(id);
+        const userId = request.userId;
+
+        if(!note) {
+            return response.status(404).json({message: 'Note not found'});
+        }
+
+        var reviews = await NoteReview.find({noteID: id}).lean();
+        // console.log(reviews)
+
+        var ratingSum = 0
+
+        for (let [i, review] of reviews.entries()) {
+            // let review = reviews[i]
+            console.log(review)
+            if (review.rating) {
+                ratingSum += review.rating;
+            }
+
+            let user = await Register.findById(review.userID).lean()
+            // console.log(user)
+            if (user?.username) {
+                // console.log(user.username)
+                reviews[i].userName = user.username
+            }
+        }
+
+        var averageRating = Math.round(ratingSum / reviews.length * 100) / 100 || 0
+
+        await Note.findByIdAndUpdate(id, {averageRating});
+        
+        return response.status(200).json({
+            reviews: reviews,
+            averageRating: ratingSum / reviews.length
+        });
+
+    } catch (error){
+        console.log(error.message);
+        response.status(500).send({message: error.message});
+    }
+})
+
+// Route to get similar notes
+router.get('/:id/similar', async (request, response) => {
+    try{
+        const {id} = request.params;
+        const note = await Note.findById(id);
+
+        if(!note) {
+            return response.status(404).json({message: 'Note not found'});
+        }
+
+        const subject = note.subject;
+        const notes = await Note.find({subject}).lean();
+
+        for (const i in notes) {
+            let note = notes[i];
+            let id = note.author;
+            let author = await Register.findById(id);
+            if (author?.username){
+                // console.log(author.username)
+                notes[i].authorName = author.username;
+            }
+        }
+
+        // const author = await Register.findById(note.author);
+
+        return response.status(200).json(notes);
+    } catch (error){
+        console.log(error.message);
+        response.status(500).send({message: error.message});
+    }
+})
+
+
+router.get('/', async (request, response) => {
+    try{
+        const notes = await Note.find({}).lean();
+
+        for (const i in notes) {
+            let note = notes[i];
+            let id = note.author;
+            let author = await Register.findById(id);
+            if (author?.username){
+                // console.log(author.username)
+                notes[i].authorName = author.username;
+            }
+        }
+
+        return response.status(200).json({
+            count: notes.length,
+            data: notes
+        });
     } catch (error){
         console.log(error.message);
         response.status(500).send({message: error.message});
