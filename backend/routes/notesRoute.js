@@ -40,7 +40,8 @@ router.post('/', verifyJWT, fileUpload(), async (request, response) => {
             title: request.body.title,
             subject: request.body.subject,
             files: files,
-            author: request.userId
+            author: request.userId,
+            averageRating: 0
         };
 
         const note = await Note.create(newNote);
