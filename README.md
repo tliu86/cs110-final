@@ -14,13 +14,9 @@ Installs necessary dependencies.
 ### `npm run dev`
 
 Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Follow the instructions in the terminal to open. (h + enter -> o + enter)
 
 **In the backend folder, once you are in that directory you can run:**
-
 
 ### `npm i .`
 ### `npm i nodemon`
