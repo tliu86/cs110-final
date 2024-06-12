@@ -36,6 +36,10 @@ app.use('/api', loginRoute);
 
 app.use('/uploads', express.static('uploads'))
 
+app.get('/user-data/:userName', profileRoute)
+
+app.post('/newInfo', profileRoute)
+
 mongoose
     .connect(mongoDBURL)
     .then(() => {
