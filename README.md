@@ -4,7 +4,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
-In the project directory, you can run:
+In the project directory, you can access two files: the frontend and the backend. 
+
+In the frontend, make sure you are in that directory and run:
 
 ### `npm start`
 
@@ -14,7 +16,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-In the backend folder (create a terminal within the backend), you can run
+In the backend folder, once you are in that directory you can run:
 
 ### `npm run dev` 
 
